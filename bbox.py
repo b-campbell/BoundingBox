@@ -271,8 +271,3 @@ if __name__ == '__main__':
 
 	# Finally, show the plot.
 	plt.show()
-
-    Contact GitHub API Training Shop Blog About 
-
-    © 2017 GitHub, Inc. Terms Privacy Security Status Help 
-
