@@ -1,3 +1,30 @@
+
+Skip to content
+This repository
+
+    Pull requests
+    Issues
+    Marketplace
+    Gist
+
+    @b-campbell
+
+1
+0
+
+    0
+
+b-campbell/BoundingBox
+Code
+Issues 0
+Pull requests 0
+Projects 0
+Wiki
+Settings
+BoundingBox/bbox.py
+776834f 19 minutes ago
+@b-campbell b-campbell Uploading refactored database code for compatibility.
+274 lines (231 sloc) 9.1 KB
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as numpy
@@ -81,7 +108,6 @@ def save(event):
 	all_coords[img_name] = []
 	all_coords[img_name].append(classification)
 	all_coords[img_name].extend(coords)
-
 
 	coords = []
 
@@ -272,3 +298,8 @@ if __name__ == '__main__':
 
 	# Finally, show the plot.
 	plt.show()
+
+    Contact GitHub API Training Shop Blog About 
+
+    © 2017 GitHub, Inc. Terms Privacy Security Status Help 
+
