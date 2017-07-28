@@ -74,16 +74,30 @@ def save(event):
 	""" Function to save the current bounding box coordinates to a dictionary. """
 	global coords, all_coords, fig
 
-	all_coords[images[imgindex]] = coords
+	# Get image details.
+	img_name = images[imgindex].split("/")[-1]
+	classification = images[imgindex].split("/")[1]
+
+	all_coords[img_name] = []
+	all_coords[img_name].append(classification)
+	all_coords[img_name].extend(coords)
+
+
 	coords = []
 
 	# redraw the image and the connected set of coordinates.
 	ax.cla()
+	
+	# Get image details.
+	img_name = images[imgindex].split("/")[-1]
+	classification = images[imgindex].split("/")[1]
+
 	img = mpimg.imread(images[imgindex])
 	ax.imshow(img)
-	ax.set_title(images[imgindex])
-	if images[imgindex] in all_coords:
-		drawboxfromcoords(all_coords[images[imgindex]])
+	ax.set_title(classification + " : " + img_name)
+	print(all_coords[img_name])
+	if img_name in all_coords:
+		drawboxfromcoords(all_coords[img_name][1:])
 	fig.canvas.draw()
 	# disable drawing of new coordinates.
 	fig.canvas.mpl_disconnect(cid)
@@ -109,15 +123,20 @@ def nextimage(event):
 	coords = []
 	# redraw the figure with the new image.
 	ax.cla()
+
+	# Get image details.
+	img_name = images[imgindex].split("/")[-1]
+	classification = images[imgindex].split("/")[1]
 	img = mpimg.imread(images[imgindex])
 	ax.imshow(img)
-	ax.set_title(images[imgindex])
+	ax.set_title(classification + " : " + img_name)
+
 	# if we already have a set of coordinates saved, draw the box. Otherwise, enable mouse input. """
-	if images[imgindex] in all_coords:
-		if len(all_coords[images[imgindex]]) == 0:
+	if img_name in all_coords:
+		if len(all_coords[img_name]) == 0:
 			cid = fig.canvas.mpl_connect('button_press_event', click)
 		else:
-			drawboxfromcoords(all_coords[images[imgindex]])
+			drawboxfromcoords(all_coords[img_name][1:])
 			fig.canvas.mpl_disconnect(cid)
 	else:
 		cid = fig.canvas.mpl_connect('button_press_event', click)
@@ -133,15 +152,20 @@ def previmage(event):
 	coords = []
 	# redraw the figure with the new image.
 	ax.cla()
+
+	# Get image details.
+	img_name = images[imgindex].split("/")[-1]
+	classification = images[imgindex].split("/")[1]
 	img = mpimg.imread(images[imgindex])
 	ax.imshow(img)
-	ax.set_title(images[imgindex])
+	ax.set_title(classification + " : " + img_name)
+
 	# if we already have a set of coordinates saved, draw the box. Otherwise, enable mouse input. """
-	if images[imgindex] in all_coords:
-		if len(all_coords[images[imgindex]]) == 0:
+	if img_name in all_coords:
+		if len(all_coords[img_name]) == 0:
 			cid = fig.canvas.mpl_connect('button_press_event', click)
 		else:
-			drawboxfromcoords(all_coords[images[imgindex]])
+			drawboxfromcoords(all_coords[img_name][1:])
 			fig.canvas.mpl_disconnect(cid)
 	else:
 		cid = fig.canvas.mpl_connect('button_press_event', click)
@@ -172,6 +196,14 @@ def joinstartend(event):
 	coord2 = coords[len(coords)-1]
 	line, = ax.plot((coord1[0],coord2[0]),(coord1[1],coord2[1]),'k-')
 	fig.canvas.draw()
+
+def dictContains(dict, img_name):
+	""" Function to check whether a image (by image name) is currently in the dictionary. """
+	# Note: need to iterate over the dictionary here, since each value is a [image_name,coords] collection. 
+	for key,value in dict.iteritems():
+		if value[0] == img_name:
+			return True
+	return False
 
 
 if __name__ == '__main__':
@@ -214,18 +246,28 @@ if __name__ == '__main__':
 	# Initialize program defaults, load the set of images and pre-saved coordinates (if any).
 	imgindex = 0
 	images = loadimages(imagedir)
+	# Convert image name to unix path format.
+	for i in range(0,len(images)):
+		images[i] = images[i].replace("\\","/")
+	
 	coords = []
 	all_coords = loadcoordinates(coordinatesfile)
+
+	# Get image details.
+	img_name = images[imgindex].split("/")[-1]
+	classification = images[imgindex].split("/")[1]
 
 	# Plot the first image and it's bounding box (if saved previously)
 	img = mpimg.imread(images[imgindex])
 	ax.imshow(img)
-	ax.set_title(images[imgindex])
-	if images[imgindex] in all_coords:
-		if len(all_coords[images[imgindex]]) == 0:
+	ax.set_title(classification + " : " + img_name)
+
+	# Display image bounding box if it already exists.
+	if img_name in all_coords:
+		if len(all_coords[img_name]) == 0:
 			cid = fig.canvas.mpl_connect('button_press_event', click)
 		else:
-			drawboxfromcoords(all_coords[images[imgindex]])
+			drawboxfromcoords(all_coords[img_name][1:])
 			fig.canvas.mpl_disconnect(cid)
 
 	# Finally, show the plot.
